@@ -132,16 +132,16 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [ ] Effect chain ordering
 
 ### Phase 3: AI/Neural Integration
-- [ ] Mock AI models (for pipeline testing)
-- [ ] Model interface abstraction
-- [ ] Neural tool routing
-- [ ] Style transfer integration
-- [ ] Denoise/restore integration
+- [x] Mock AI models (for pipeline testing)
+- [x] Model interface abstraction
+- [x] Neural tool routing (via Agent decision logic)
+- [ ] Style transfer integration (real models - Phase 4)
+- [ ] Denoise/restore integration (real models - Phase 4)
 
 ### Phase 4: Agent & Decision Logic
-- [ ] Prompt parsing
-- [ ] Tool selection (DSP vs Neural vs Both)
-- [ ] Confidence scoring
+- [x] Prompt parsing (Intent analyzer)
+- [x] Tool selection (DSP vs Neural vs Both)
+- [x] Confidence scoring
 - [ ] Safety checks (clipping, phase, loudness)
 
 ### Phase 5: State & CLI
@@ -198,7 +198,9 @@ nueva/
 ### Learned Rules
 <!-- Claude adds rules here after corrections -->
 
-1. **[PLACEHOLDER]** First learned rule will go here
+1. **[AMBIGUOUS VS COMPLEX]** Distinguish "truly ambiguous" (vague prompts like "make it better" with no specifics) from "complex" (multiple effects requested). Truly ambiguous → ASK_CLARIFICATION with ~20% confidence. Complex → might use BOTH tools with higher confidence.
+
+2. **[SPEC FILE NAME]** The spec file has spaces in the name: `NUEVA_IMPLEMENTATION (3).md` — always quote paths.
 
 ---
 
@@ -206,9 +208,20 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: Not started
-Worktree: N/A
-Last checkpoint: N/A
+Phase: 3 (AI/Neural Integration) - COMPLETE
+Worktree: wt-ai
+Last checkpoint: b1e9e33 [PHASE-3.1] AI/Neural module foundation
+
+### Completed This Session
+- Project scaffold (Cargo.toml, lib.rs, module structure)
+- Error types with recovery suggestions (error.rs)
+- Neural model trait and types (neural/model.rs)
+- Mock AI models: style-transfer, denoise, restore, enhance, ace-step (neural/mock.rs)
+- Neural model registry (neural/registry.rs)
+- Neural context tracker for intentional artifacts (neural/context.rs)
+- Agent decision logic with confidence scoring (agent/decision.rs)
+- Intent analyzer with parameter extraction (agent/intent.rs)
+- 30 unit tests passing
 
 ### Blockers
 <!-- List any blockers here -->
@@ -216,8 +229,9 @@ None
 
 ### Notes
 <!-- Session-specific notes -->
-- Full spec in NUEVA_IMPLEMENTATION.md
-- Priority: Audio Engine → Mock AI → DSP → Full integration
+- Full spec in `NUEVA_IMPLEMENTATION (3).md` (note the space in filename)
+- Ready for Phase 3.5 milestones (conversation context, undo/explain)
+- Real AI model integration deferred to Phase 4
 
 ---
 
