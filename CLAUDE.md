@@ -138,6 +138,13 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [ ] Style transfer integration (real models - Phase 4)
 - [ ] Denoise/restore integration (real models - Phase 4)
 
+### Phase 3.5: Conversation & Context (§7)
+- [x] ConversationContext with messages, actions
+- [x] Reference resolution ("the EQ", "that", "undo")
+- [x] EffectFocus for modify vs add
+- [x] UndoManager with 50-level undo/redo
+- [x] Explanation generation
+
 ### Phase 4: Agent & Decision Logic
 - [x] Prompt parsing (Intent analyzer)
 - [x] Tool selection (DSP vs Neural vs Both)
@@ -208,11 +215,12 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 3 (AI/Neural Integration) - COMPLETE
+Phase: 3.5 (Conversation & Context) - COMPLETE
 Worktree: wt-ai
-Last checkpoint: b1e9e33 [PHASE-3.1] AI/Neural module foundation
+Last checkpoint: d718fa6 [PHASE-3.5] Conversation context and undo/explain
 
 ### Completed This Session
+**Phase 3.1:**
 - Project scaffold (Cargo.toml, lib.rs, module structure)
 - Error types with recovery suggestions (error.rs)
 - Neural model trait and types (neural/model.rs)
@@ -221,7 +229,14 @@ Last checkpoint: b1e9e33 [PHASE-3.1] AI/Neural module foundation
 - Neural context tracker for intentional artifacts (neural/context.rs)
 - Agent decision logic with confidence scoring (agent/decision.rs)
 - Intent analyzer with parameter extraction (agent/intent.rs)
-- 30 unit tests passing
+
+**Phase 3.5:**
+- ConversationContext, Message, AgentAction types (agent/context.rs)
+- Reference resolution: "the EQ", "that", "it", "first/last" (agent/reference.rs)
+- EffectFocus tracking for modify vs add decisions
+- UndoManager with 50-level undo/redo stack (agent/undo.rs)
+- Explanation generation for actions and chains (agent/explain.rs)
+- 53 unit tests passing
 
 ### Blockers
 <!-- List any blockers here -->
@@ -230,7 +245,7 @@ None
 ### Notes
 <!-- Session-specific notes -->
 - Full spec in `NUEVA_IMPLEMENTATION (3).md` (note the space in filename)
-- Ready for Phase 3.5 milestones (conversation context, undo/explain)
+- AI worktree complete: ready to merge or continue with safety checks
 - Real AI model integration deferred to Phase 4
 
 ---
