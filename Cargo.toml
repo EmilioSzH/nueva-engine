@@ -2,8 +2,10 @@
 name = "nueva"
 version = "0.1.0"
 edition = "2021"
+authors = ["Nueva Team"]
 description = "Functional audio processing system with AI and DSP interfaces"
 license = "MIT"
+repository = "https://github.com/nueva/nueva"
 
 [lib]
 name = "nueva"
@@ -15,7 +17,7 @@ path = "src/main.rs"
 
 [dependencies]
 # Audio I/O
-hound = "3.5"                    # WAV file reading/writing
+hound = "3.5"                        # WAV file reading/writing
 
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
@@ -23,18 +25,35 @@ serde_json = "1.0"
 
 # Error handling
 thiserror = "1.0"
+anyhow = "1.0"
+
+# Async runtime (for future AI bridge)
+tokio = { version = "1.0", features = ["full"], optional = true }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
 
 # Utilities
 uuid = { version = "1.0", features = ["v4", "serde"] }
 sha2 = "0.10"                        # SHA-256 checksums for file integrity
 
 [dev-dependencies]
-approx = "0.5"                   # Float comparison for tests
-tempfile = "3.0"                 # Temporary files for tests
+approx = "0.5"                       # Float comparison for tests
+tempfile = "3.0"                     # Temporary files for tests
+pretty_assertions = "1.0"
+test-case = "3.0"
 
 [features]
 default = []
+async-bridge = ["tokio"]
 
 [profile.release]
 lto = true
 codegen-units = 1
+
+[workspace]
+members = ["."]
