@@ -5,7 +5,7 @@ Nueva is a functional audio processing system with two parallel interfaces:
 1. **Traditional DSP Controls**: Parameter-based effects (EQ, compression, reverb)
 2. **AI Agent Interface**: Natural language commands invoking AI audio processing
 
-Full spec: `NUEVA_IMPLEMENTATION.md`
+Full spec: `NUEVA_IMPLEMENTATION (3).md`
 
 ---
 
@@ -118,11 +118,11 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 ## Implementation Phases (from spec)
 
 ### Phase 1: Audio Engine Foundation [CRITICAL]
-- [ ] Layer 0: Immutable source storage
-- [ ] Layer 1: AI state buffer
-- [ ] Layer 2: DSP chain (real-time)
-- [ ] Transport state machine
-- [ ] Basic playback/export
+- [x] Layer 0: Immutable source storage
+- [x] Layer 1: AI state buffer
+- [x] Layer 2: DSP chain (real-time)
+- [x] Transport state machine
+- [x] Basic playback/export (import/export WAV)
 
 ### Phase 2: DSP Effects Library
 - [ ] EQ (parametric, shelf, HP/LP filters)
@@ -198,7 +198,9 @@ nueva/
 ### Learned Rules
 <!-- Claude adds rules here after corrections -->
 
-1. **[PLACEHOLDER]** First learned rule will go here
+1. **[SPEC FILE]** The spec file is `NUEVA_IMPLEMENTATION (3).md` (not without the number)
+2. **[SUBAGENTS]** Spawn 4+ parallel subagents for independent module implementations - significant speedup
+3. **[VALIDATION]** Audio validation (§3.6) catches edge cases - always validate imported audio
 
 ---
 
@@ -206,9 +208,9 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: Not started
-Worktree: N/A
-Last checkpoint: N/A
+Phase: 1 - Audio Engine Foundation (COMPLETE)
+Worktree: wt-engine
+Last checkpoint: [PHASE-1] Audio engine foundation
 
 ### Blockers
 <!-- List any blockers here -->
@@ -216,8 +218,9 @@ None
 
 ### Notes
 <!-- Session-specific notes -->
-- Full spec in NUEVA_IMPLEMENTATION.md
+- Full spec in NUEVA_IMPLEMENTATION (3).md
 - Priority: Audio Engine → Mock AI → DSP → Full integration
+- 113 unit tests + 9 doc-tests passing
 
 ---
 
