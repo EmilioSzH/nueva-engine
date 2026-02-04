@@ -14,6 +14,7 @@ mod decision;
 mod explain;
 mod intent;
 mod reference;
+mod safety;
 mod undo;
 
 pub use context::{
@@ -24,4 +25,8 @@ pub use decision::{Agent, AgentResponse, ToolDecision, ToolType};
 pub use explain::{explain_full_chain, explain_last_action};
 pub use intent::{Intent, IntentAnalyzer};
 pub use reference::resolve_reference;
+pub use safety::{
+    AudioAnalysis, RecommendationPriority, SafetyCheckResult, SafetyChecker, SafetyIssue,
+    SafetyMitigation, SafetyRecommendation,
+};
 pub use undo::{UndoManager, UndoableAction};
