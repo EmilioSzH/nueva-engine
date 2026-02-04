@@ -145,10 +145,13 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [ ] Safety checks (clipping, phase, loudness)
 
 ### Phase 5: State & CLI
-- [ ] Project serialization (JSON)
-- [ ] Undo/redo stack
-- [ ] Bake operation
-- [ ] CLI commands
+- [x] Project serialization (JSON) - `src/state/project.rs`
+- [x] Undo/redo stack - `src/state/undo.rs`
+- [x] Bake operation - `Project::bake()` in project.rs
+- [x] CLI commands - `src/cli/` module
+- [x] Autosave & crash recovery - `src/state/autosave.rs`, `crash_recovery.rs`
+- [x] Schema migrations - `src/state/migration.rs`
+- [x] Storage management - `src/state/storage.rs`
 - [ ] Daemon mode (optional)
 
 ---
@@ -198,7 +201,9 @@ nueva/
 ### Learned Rules
 <!-- Claude adds rules here after corrections -->
 
-1. **[PLACEHOLDER]** First learned rule will go here
+1. **Use `Self::` for associated functions** - When calling static methods like `project_file_path()` from an instance method, use `Self::method()` not `self.method()`
+2. **Run cargo fmt before committing** - Subagents may produce code with different formatting; always run `cargo fmt` to normalize
+3. **Spawn subagents for parallel file creation** - When implementing multiple independent modules, spawn separate subagents for each file to maximize parallelism
 
 ---
 
@@ -206,9 +211,19 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: Not started
-Worktree: N/A
-Last checkpoint: N/A
+Phase: 5 - State & CLI (COMPLETE)
+Worktree: wt-state
+Last checkpoint: 2024-02-04 - All state management implemented
+
+### Completed This Session
+- Project serialization with full schema from §8.2
+- Undo/redo stack with action tracking and trim history
+- Autosave manager (60s interval, 10 max, rotation)
+- Crash recovery (lock file detection, autosave recovery)
+- Schema versioning and migration system
+- Layer 1 storage management with pruning
+- CLI commands (create-project, undo, redo, history, bake, print-state)
+- 47 passing tests
 
 ### Blockers
 <!-- List any blockers here -->
@@ -216,8 +231,9 @@ None
 
 ### Notes
 <!-- Session-specific notes -->
-- Full spec in NUEVA_IMPLEMENTATION.md
-- Priority: Audio Engine → Mock AI → DSP → Full integration
+- Full spec in `NUEVA_IMPLEMENTATION (3).md`
+- Daemon mode deferred (optional per spec)
+- Audio processing stubs in place (needs wt-engine integration)
 
 ---
 

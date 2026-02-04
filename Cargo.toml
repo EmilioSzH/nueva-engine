@@ -1,0 +1,45 @@
+[package]
+name = "nueva-state"
+version = "0.1.0"
+edition = "2021"
+description = "State management module for Nueva audio processing system"
+authors = ["Nueva Team"]
+license = "MIT"
+
+[lib]
+name = "nueva_state"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nueva"
+path = "src/main.rs"
+
+[dependencies]
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Date/time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Hashing for file integrity
+sha2 = "0.10"
+
+# Error handling
+thiserror = "1.0"
+
+# UUID generation for action IDs
+uuid = { version = "1.0", features = ["v4", "serde"] }
+
+# CLI parsing
+clap = { version = "4.0", features = ["derive"] }
+
+# File system utilities
+walkdir = "2.0"
+
+# Logging
+log = "0.4"
+env_logger = "0.10"
+
+[dev-dependencies]
+tempfile = "3.0"
