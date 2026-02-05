@@ -86,7 +86,7 @@ Main task: "Implement DSP effects library"
 
 Spawn subagents:
   - Subagent A: Implement EQ (parametric, shelf, filters)
-  - Subagent B: Implement Dynamics (compressor, gate, limiter)  
+  - Subagent B: Implement Dynamics (compressor, gate, limiter)
   - Subagent C: Implement Time-based (delay, reverb)
   - Subagent D: Write tests for all effects
 
@@ -145,10 +145,13 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [ ] Safety checks (clipping, phase, loudness)
 
 ### Phase 5: State & CLI
-- [ ] Project serialization (JSON)
-- [ ] Undo/redo stack
-- [ ] Bake operation
-- [ ] CLI commands
+- [x] Project serialization (JSON) - `src/state/project.rs`
+- [x] Undo/redo stack - `src/state/undo.rs`
+- [x] Bake operation - `Project::bake()` in project.rs
+- [x] CLI commands - `src/cli/` module
+- [x] Autosave & crash recovery - `src/state/autosave.rs`, `crash_recovery.rs`
+- [x] Schema migrations - `src/state/migration.rs`
+- [x] Storage management - `src/state/storage.rs`
 - [ ] Daemon mode (optional)
 
 ---
@@ -201,6 +204,8 @@ nueva/
 1. **[SPEC FILE]** The spec file is `NUEVA_IMPLEMENTATION (3).md` (not without the number)
 2. **[SUBAGENTS]** Spawn 4+ parallel subagents for independent module implementations - significant speedup
 3. **[VALIDATION]** Audio validation (§3.6) catches edge cases - always validate imported audio
+4. **[Self::]** Use `Self::` for associated functions - When calling static methods from an instance method
+5. **[FORMAT]** Run cargo fmt before committing - Subagents may produce code with different formatting
 
 ---
 
@@ -208,9 +213,19 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 1 - Audio Engine Foundation (COMPLETE)
-Worktree: wt-engine
-Last checkpoint: [PHASE-1] Audio engine foundation
+Phase: 1+5 Complete (Engine + State)
+Worktrees: wt-engine, wt-state
+Last checkpoint: Merge of Phase 1 and Phase 5
+
+### Completed
+**Phase 1 (wt-engine):**
+- Audio engine, transport, layers
+- 113 unit tests + 9 doc-tests
+
+**Phase 5 (wt-state):**
+- Project serialization, undo/redo, autosave
+- CLI commands, crash recovery, migrations
+- 47 tests
 
 ### Blockers
 <!-- List any blockers here -->
@@ -218,9 +233,9 @@ None
 
 ### Notes
 <!-- Session-specific notes -->
-- Full spec in NUEVA_IMPLEMENTATION (3).md
-- Priority: Audio Engine → Mock AI → DSP → Full integration
-- 113 unit tests + 9 doc-tests passing
+- Full spec in `NUEVA_IMPLEMENTATION (3).md`
+- Priority: DSP Effects → AI/Neural → Agent Logic
+- Daemon mode deferred (optional per spec)
 
 ---
 

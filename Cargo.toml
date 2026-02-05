@@ -33,6 +33,8 @@ tokio = { version = "1.0", features = ["full"], optional = true }
 # Logging
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+log = "0.4"
+env_logger = "0.10"
 
 # Time handling
 chrono = { version = "0.4", features = ["serde"] }
@@ -40,6 +42,12 @@ chrono = { version = "0.4", features = ["serde"] }
 # Utilities
 uuid = { version = "1.0", features = ["v4", "serde"] }
 sha2 = "0.10"                        # SHA-256 checksums for file integrity
+
+# CLI parsing
+clap = { version = "4.0", features = ["derive"] }
+
+# File system utilities
+walkdir = "2.0"
 
 [dev-dependencies]
 approx = "0.5"                       # Float comparison for tests

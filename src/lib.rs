@@ -34,7 +34,12 @@ pub mod layers;
 pub mod agent;
 pub mod neural;
 
+// State management modules
+pub mod cli;
+pub mod state;
+
 // Re-export commonly used types
 pub use agent::{Agent, AgentResponse, ToolDecision};
 pub use error::{NuevaError, Result};
 pub use neural::{NeuralModel, NeuralModelRegistry};
+pub use state::project::Project;

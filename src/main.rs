@@ -1,43 +1,48 @@
-//! Nueva CLI - Command-line interface for audio processing
+//! Nueva CLI - Audio Processing System
+//!
+//! Command-line interface for the Nueva audio processing system.
 //!
 //! Usage:
 //!   nueva-cli --help
-//!   nueva-cli --input audio.wav --output processed.wav --gain -6.0
+//!   nueva-cli create-project ./my_project --input audio.wav
 
-use std::env;
-use std::process;
+use clap::Parser;
+use env_logger::Env;
+use log::info;
 
-fn main() {
-    let args: Vec<String> = env::args().collect();
+use nueva::cli::{Cli, Commands};
+use nueva::state::error::Result;
 
-    if args.len() < 2 || args.contains(&"--help".to_string()) || args.contains(&"-h".to_string()) {
-        print_usage();
-        process::exit(0);
+fn main() -> Result<()> {
+    // Initialize logger
+    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+
+    let cli = Cli::parse();
+
+    info!("Nueva Audio Processor v{}", env!("CARGO_PKG_VERSION"));
+
+    match cli.command {
+        Some(cmd) => handle_command(cmd),
+        None => {
+            // Interactive mode (not implemented yet)
+            println!("Nueva Audio Processor v{}", env!("CARGO_PKG_VERSION"));
+            println!("Use --help for available commands");
+            Ok(())
+        }
     }
-
-    // TODO: Implement CLI argument parsing
-    eprintln!("Nueva CLI - Not yet implemented");
-    eprintln!("Run with --help for usage information");
-    process::exit(1);
 }
 
-fn print_usage() {
-    println!(
-        "Nueva Audio Processing System v{}",
-        env!("CARGO_PKG_VERSION")
-    );
-    println!();
-    println!("USAGE:");
-    println!("    nueva-cli [OPTIONS]");
-    println!();
-    println!("OPTIONS:");
-    println!("    -h, --help              Print help information");
-    println!("    --input <FILE>          Input audio file");
-    println!("    --output <FILE>         Output audio file");
-    println!("    --gain <DB>             Apply gain in dB (-96 to +24)");
-    println!("    --chain <JSON>          Apply DSP chain from JSON config");
-    println!("    --project <DIR>         Project directory");
-    println!("    --generate-test-tone    Generate test tone");
-    println!("    --freq <HZ>             Test tone frequency (default: 440)");
-    println!("    --duration <SEC>        Test tone duration (default: 2.0)");
+fn handle_command(cmd: Commands) -> Result<()> {
+    match cmd {
+        Commands::CreateProject { path, input } => {
+            nueva::cli::commands::create_project(&path, input.as_deref())
+        }
+        Commands::LoadProject { path } => nueva::cli::commands::load_project(&path),
+        Commands::SaveState { path } => nueva::cli::commands::save_state(&path),
+        Commands::Undo { path } => nueva::cli::commands::undo(&path),
+        Commands::Redo { path } => nueva::cli::commands::redo(&path),
+        Commands::History { path } => nueva::cli::commands::show_history(&path),
+        Commands::Bake { path } => nueva::cli::commands::bake(&path),
+        Commands::PrintState { path } => nueva::cli::commands::print_state(&path),
+    }
 }
