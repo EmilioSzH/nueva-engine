@@ -164,11 +164,11 @@ class AceStepProcessor:
         sys.path.insert(0, self.ACE_STEP_PATH)
 
         try:
-            # Try to import the pipeline
-            from acestep.acestep_v15_pipeline import AceStepPipeline
+            # Try to import the handler
+            from acestep.acestep_v15_pipeline import AceStepHandler
 
-            # Initialize pipeline (this loads the model)
-            self._pipeline = AceStepPipeline()
+            # Initialize handler (this loads the model)
+            self._pipeline = AceStepHandler()
             self._model_loaded = True
             print("ACE-Step 1.5 model loaded successfully", file=sys.stderr)
 
@@ -214,18 +214,38 @@ class AceStepProcessor:
         inference_steps = params.get("inference_steps", 8)
         guidance_scale = params.get("guidance_scale", 3.0)
 
+        # Map our modes to ACE-Step task_types
+        task_type_map = {
+            "transform": "repaint",
+            "repaint": "repaint",
+            "cover": "cover",
+            "extract": "repaint",
+            "layer": "repaint",
+            "complete": "repaint",
+        }
+        task_type = task_type_map.get(mode, "repaint")
+
         try:
+            # Initialize service if needed
+            if not hasattr(self._pipeline, '_initialized'):
+                self._pipeline.initialize_service()
+                self._pipeline._initialized = True
+
             # Run ACE-Step processing
-            result = self._pipeline.process(
-                audio_path=str(input_path),
-                prompt=prompt,
-                output_path=str(output_path),
-                mode=mode,
-                strength=intensity,
-                preserve_melody=preserve_melody,
-                num_inference_steps=inference_steps,
+            result = self._pipeline.generate_music(
+                captions=prompt,
+                lyrics="",
+                src_audio=str(input_path),
+                task_type=task_type,
+                inference_steps=inference_steps,
                 guidance_scale=guidance_scale,
+                audio_cover_strength=intensity,
             )
+
+            # Save output audio
+            if result and "audio" in result:
+                import soundfile as sf
+                sf.write(str(output_path), result["audio"], result.get("sample_rate", 44100))
 
             # Determine intentional artifacts based on mode and prompt
             artifacts = self._detect_artifacts(mode, prompt, params)
