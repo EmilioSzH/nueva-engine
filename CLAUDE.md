@@ -117,38 +117,43 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 
 ## Implementation Phases (from spec)
 
-### Phase 1: Audio Engine Foundation [CRITICAL]
-- [ ] Layer 0: Immutable source storage
-- [ ] Layer 1: AI state buffer
-- [ ] Layer 2: DSP chain (real-time)
-- [ ] Transport state machine
-- [ ] Basic playback/export
+### Phase 1: Audio Engine Foundation [COMPLETE]
+- [x] Layer 0: Immutable source storage (`src/layers/layer0.rs`)
+- [x] Layer 1: AI state buffer (`src/layers/layer1.rs`)
+- [x] Layer 2: DSP chain (`src/layers/layer2.rs`)
+- [x] Transport state machine (`src/engine/transport.rs`)
+- [x] Basic playback/export (`src/engine/io.rs`)
 
-### Phase 2: DSP Effects Library
+### Phase 2: DSP Effects Library [COMPLETE]
 - [x] EQ (parametric, shelf, HP/LP filters)
 - [x] Dynamics (compressor, limiter, gate)
 - [x] Time-based (delay, reverb)
 - [x] Utility (gain, saturation)
-- [x] Effect chain ordering
+- [x] Effect chain ordering (`src/dsp/chain.rs`)
 
-### Phase 3: AI/Neural Integration
-- [ ] Mock AI models (for pipeline testing)
-- [ ] Model interface abstraction
-- [ ] Neural tool routing
-- [ ] Style transfer integration
-- [ ] Denoise/restore integration
+### Phase 3: AI/Neural Integration [COMPLETE]
+- [x] Mock AI models (`src/neural/mock.rs`)
+- [x] Model interface abstraction (`src/neural/model.rs`)
+- [x] Neural tool routing (`src/neural/registry.rs`)
+- [x] Context tracking for artifacts (`src/neural/context.rs`)
+- [ ] Real model integration (style transfer, denoise) - requires Python bridge
 
-### Phase 4: Agent & Decision Logic
-- [ ] Prompt parsing
-- [ ] Tool selection (DSP vs Neural vs Both)
-- [ ] Confidence scoring
-- [ ] Safety checks (clipping, phase, loudness)
+### Phase 4: Agent & Decision Logic [COMPLETE]
+- [x] Prompt/intent parsing (`src/agent/intent.rs`)
+- [x] Tool selection DSP/Neural/Both (`src/agent/decision.rs`)
+- [x] Confidence scoring (`src/agent/decision.rs`)
+- [x] Safety checks (`src/agent/safety.rs`)
+- [x] Reference resolution (`src/agent/reference.rs`)
+- [x] Explanation generation (`src/agent/explain.rs`)
 
-### Phase 5: State & CLI
-- [ ] Project serialization (JSON)
-- [ ] Undo/redo stack
-- [ ] Bake operation
-- [ ] CLI commands
+### Phase 5: State & CLI [COMPLETE]
+- [x] Project serialization JSON (`src/state/project.rs`)
+- [x] Undo/redo stack (`src/state/undo.rs`)
+- [x] Autosave (`src/state/autosave.rs`)
+- [x] Crash recovery (`src/state/crash_recovery.rs`)
+- [x] Schema migrations (`src/state/migration.rs`)
+- [x] CLI commands (`src/cli/commands.rs`)
+- [ ] Bake operation - needs integration
 - [ ] Daemon mode (optional)
 
 ---
@@ -207,9 +212,9 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 2 (DSP Effects Library) - COMPLETE
-Worktree: wt-dsp
-Last checkpoint: [PHASE-2.0] DSP Effects Library complete
+Phase: All core phases COMPLETE
+Worktree: wt-engine (synced with master)
+Last checkpoint: All worktrees merged to master
 
 ### Blockers
 <!-- List any blockers here -->
@@ -218,9 +223,9 @@ None
 ### Notes
 <!-- Session-specific notes -->
 - Full spec in `NUEVA_IMPLEMENTATION (3).md`
-- Phase 2 completed with 171 passing tests
-- Effects implemented: Gain, ParametricEQ, Compressor, Gate, Limiter, Reverb, Delay, Saturation
-- Effect chain with auto-ordering per spec §4.3
+- **388 unit tests + 12 doc-tests passing**
+- All core modules implemented across worktrees (wt-engine, wt-dsp, wt-ai, wt-state)
+- Remaining work: Real AI model integration (Python bridge), Bake operation, Daemon mode
 
 ---
 
