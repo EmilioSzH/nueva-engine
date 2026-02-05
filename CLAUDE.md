@@ -136,7 +136,8 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [x] Model interface abstraction (`src/neural/model.rs`)
 - [x] Neural tool routing (`src/neural/registry.rs`)
 - [x] Context tracking for artifacts (`src/neural/context.rs`)
-- [ ] Real model integration (style transfer, denoise) - requires Python bridge
+- [x] ACE-Step 1.5 integration (`src/neural/ace_step.rs`, `python/nueva/`)
+- [x] Python bridge for AI models (`python/nueva/bridge.py`)
 
 ### Phase 4: Agent & Decision Logic [COMPLETE]
 - [x] Prompt/intent parsing (`src/agent/intent.rs`)
@@ -223,9 +224,11 @@ None
 ### Notes
 <!-- Session-specific notes -->
 - Full spec in `NUEVA_IMPLEMENTATION (3).md`
-- **388 unit tests + 12 doc-tests passing**
+- **391 unit tests + 12 doc-tests passing**
 - All core modules implemented across worktrees (wt-engine, wt-dsp, wt-ai, wt-state)
-- Remaining work: Real AI model integration (Python bridge), Bake operation, Daemon mode
+- ACE-Step 1.5 integrated: `src/neural/ace_step.rs` (Rust) + `python/nueva/` (Python bridge)
+- ACE-Step installed at `C:\Users\dawha\ACE-Step-1.5` with models downloaded
+- Remaining work: Bake operation, Daemon mode (optional)
 
 ---
 

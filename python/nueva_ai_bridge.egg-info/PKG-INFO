@@ -1,0 +1,19 @@
+Metadata-Version: 2.4
+Name: nueva-ai-bridge
+Version: 0.1.0
+Summary: AI Bridge for Nueva audio processing - ACE-Step 1.5 integration
+Requires-Python: >=3.11
+Requires-Dist: torch>=2.0.0
+Requires-Dist: torchaudio>=2.0.0
+Requires-Dist: soundfile>=0.12.0
+Requires-Dist: numpy>=1.24.0
+Requires-Dist: pydantic>=2.0.0
+Provides-Extra: ace-step
+Requires-Dist: gradio>=4.0.0; extra == "ace-step"
+Requires-Dist: transformers>=4.35.0; extra == "ace-step"
+Requires-Dist: accelerate>=0.25.0; extra == "ace-step"
+Requires-Dist: diffusers>=0.24.0; extra == "ace-step"
+Requires-Dist: safetensors>=0.4.0; extra == "ace-step"
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
