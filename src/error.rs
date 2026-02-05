@@ -25,6 +25,9 @@ pub enum NuevaError {
         source: Option<Box<dyn std::error::Error + Send + Sync>>,
     },
 
+    #[error("Invalid audio file: {details}")]
+    InvalidAudioFile { details: String },
+
     #[error("Unsupported audio format: {format}")]
     UnsupportedFormat { format: String },
 
@@ -45,11 +48,25 @@ pub enum NuevaError {
     #[error("DSP overflow: effect produced invalid audio (NaN/Inf)")]
     DspOverflow { effect_id: String },
 
+    #[error("Effect produced invalid output: {effect_id}")]
+    InvalidEffectOutput { effect_id: String },
+
     #[error("AI processing error: {reason}")]
     AiProcessingError { reason: String },
 
     #[error("Model not found: {model}")]
     ModelNotFound { model: String },
+
+    // Parameter Errors
+    #[error("Invalid parameter: {param} = {value} (expected {expected})")]
+    InvalidParameter {
+        param: String,
+        value: String,
+        expected: String,
+    },
+
+    #[error("Effect not found: {effect_id}")]
+    EffectNotFound { effect_id: String },
 
     // Resource Errors
     #[error("Out of memory: {details}")]
@@ -79,6 +96,9 @@ pub enum NuevaError {
     // Serialization Errors
     #[error("Serialization error: {0}")]
     Serialization(#[from] serde_json::Error),
+
+    #[error("Serialization error: {details}")]
+    SerializationError { details: String },
 }
 
 impl NuevaError {
@@ -87,14 +107,18 @@ impl NuevaError {
         match self {
             NuevaError::FileNotFound { .. } => "FILE_NOT_FOUND",
             NuevaError::InvalidAudio { .. } => "INVALID_AUDIO",
+            NuevaError::InvalidAudioFile { .. } => "INVALID_AUDIO_FILE",
             NuevaError::UnsupportedFormat { .. } => "UNSUPPORTED_FORMAT",
             NuevaError::AudioTooShort { .. } => "AUDIO_TOO_SHORT",
             NuevaError::AudioTooLong { .. } => "AUDIO_TOO_LONG",
             NuevaError::EmptyAudio => "EMPTY_AUDIO",
             NuevaError::ProcessingError { .. } => "PROCESSING_ERROR",
             NuevaError::DspOverflow { .. } => "DSP_OVERFLOW",
+            NuevaError::InvalidEffectOutput { .. } => "INVALID_EFFECT_OUTPUT",
             NuevaError::AiProcessingError { .. } => "AI_PROCESSING_ERROR",
             NuevaError::ModelNotFound { .. } => "MODEL_NOT_FOUND",
+            NuevaError::InvalidParameter { .. } => "INVALID_PARAMETER",
+            NuevaError::EffectNotFound { .. } => "EFFECT_NOT_FOUND",
             NuevaError::OutOfMemory { .. } => "OUT_OF_MEMORY",
             NuevaError::DiskFull { .. } => "DISK_FULL",
             NuevaError::AmbiguousPrompt { .. } => "AMBIGUOUS_PROMPT",
@@ -103,6 +127,7 @@ impl NuevaError {
             NuevaError::BakeError { .. } => "BAKE_ERROR",
             NuevaError::Io(_) => "IO_ERROR",
             NuevaError::Serialization(_) => "SERIALIZATION_ERROR",
+            NuevaError::SerializationError { .. } => "SERIALIZATION_ERROR",
         }
     }
 
@@ -110,12 +135,16 @@ impl NuevaError {
     pub fn is_recoverable(&self) -> bool {
         match self {
             NuevaError::DspOverflow { .. } => true,
+            NuevaError::InvalidEffectOutput { .. } => true,
             NuevaError::OutOfMemory { .. } => true,
             NuevaError::AmbiguousPrompt { .. } => true,
             NuevaError::ConflictingRequest { .. } => true,
             NuevaError::FileNotFound { .. } => true,
             NuevaError::InvalidAudio { .. } => true,
+            NuevaError::InvalidAudioFile { .. } => true,
             NuevaError::UnsupportedFormat { .. } => true,
+            NuevaError::InvalidParameter { .. } => true,
+            NuevaError::EffectNotFound { .. } => true,
             _ => false,
         }
     }
@@ -128,7 +157,7 @@ impl NuevaError {
                 "Verify the file hasn't been moved or deleted",
                 "Try importing from a different location",
             ],
-            NuevaError::InvalidAudio { .. } => vec![
+            NuevaError::InvalidAudio { .. } | NuevaError::InvalidAudioFile { .. } => vec![
                 "Try converting the file to WAV format first",
                 "Check if the file plays in another application",
                 "The file may be corrupted - try re-exporting from source",
@@ -142,6 +171,11 @@ impl NuevaError {
                 "Try reducing the effect intensity",
                 "Effect has been bypassed to prevent audio corruption",
             ],
+            NuevaError::InvalidEffectOutput { .. } => vec![
+                "The effect produced NaN or infinity values",
+                "Try reducing the effect parameters",
+                "Effect has been automatically bypassed",
+            ],
             NuevaError::AiProcessingError { .. } => vec![
                 "Try a different AI model",
                 "Use DSP effects instead for similar result",
@@ -152,6 +186,18 @@ impl NuevaError {
                 "Run 'nueva install-model <model_name>' to install",
                 "Available models: style-transfer, denoise, restore",
             ],
+            NuevaError::InvalidParameter { .. } => vec![
+                "Check the parameter range in documentation",
+                "Use default values if unsure",
+            ],
+            NuevaError::EffectNotFound { .. } => vec![
+                "Check the effect ID is correct",
+                "List available effects with the 'list' command",
+            ],
+            NuevaError::ProcessingError { .. } => vec![
+                "Try processing a shorter audio segment",
+                "Check effect parameters are within valid ranges",
+            ],
             NuevaError::OutOfMemory { .. } => vec![
                 "Close other applications to free memory",
                 "Try processing a shorter audio segment",
@@ -161,6 +207,10 @@ impl NuevaError {
                 "Free up disk space",
                 "Change the project location to a drive with more space",
                 "Export to a different location",
+            ],
+            NuevaError::SerializationError { .. } => vec![
+                "Check the JSON format is valid",
+                "Ensure all required fields are present",
             ],
             _ => vec![],
         }
