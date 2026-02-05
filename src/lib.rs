@@ -11,12 +11,12 @@
 //! - Layer 1: AI state buffer (output of neural transformations)
 //! - Layer 2: DSP chain (real-time adjustable effects)
 
+pub mod dsp;
 pub mod engine;
 pub mod error;
 pub mod layers;
 
 // These modules are placeholders for other worktrees
-// pub mod dsp;
 // pub mod agent;
 // pub mod neural;
 // pub mod state;

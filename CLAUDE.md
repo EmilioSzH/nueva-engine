@@ -125,11 +125,11 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [x] Basic playback/export (import/export WAV)
 
 ### Phase 2: DSP Effects Library
-- [ ] EQ (parametric, shelf, HP/LP filters)
-- [ ] Dynamics (compressor, limiter, gate)
-- [ ] Time-based (delay, reverb)
-- [ ] Utility (gain, pan, stereo tools)
-- [ ] Effect chain ordering
+- [x] EQ (parametric, shelf, HP/LP filters)
+- [x] Dynamics (compressor, limiter, gate)
+- [x] Time-based (delay, reverb)
+- [x] Utility (gain, saturation)
+- [x] Effect chain ordering
 
 ### Phase 3: AI/Neural Integration
 - [ ] Mock AI models (for pipeline testing)
@@ -208,9 +208,9 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 1 - Audio Engine Foundation (COMPLETE)
+Phase: 2 - DSP Effects Library (COMPLETE)
 Worktree: wt-engine
-Last checkpoint: [PHASE-1] Audio engine foundation
+Last checkpoint: [PHASE-2] DSP effects library
 
 ### Blockers
 <!-- List any blockers here -->
@@ -220,7 +220,7 @@ None
 <!-- Session-specific notes -->
 - Full spec in NUEVA_IMPLEMENTATION (3).md
 - Priority: Audio Engine → Mock AI → DSP → Full integration
-- 113 unit tests + 9 doc-tests passing
+- 290 unit tests + 9 doc-tests passing
 
 ---
 
