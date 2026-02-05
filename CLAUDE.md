@@ -135,8 +135,9 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [x] Mock AI models (for pipeline testing)
 - [x] Model interface abstraction
 - [x] Neural tool routing (via Agent decision logic)
-- [ ] Style transfer integration (real models - Phase 4)
-- [ ] Denoise/restore integration (real models - Phase 4)
+- [x] ACE-Step 1.5 integration (GPU detection, Rust client, Python bridge)
+- [ ] Style transfer integration (real models - deferred)
+- [ ] Denoise/restore integration (real models - deferred)
 
 ### Phase 3.5: Conversation & Context (§7)
 - [x] ConversationContext with messages, actions
@@ -215,34 +216,25 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 4 (Safety Checks) - COMPLETE
+Phase: 3.6 (ACE-Step Integration) - COMPLETE
 Worktree: wt-ai
-Last checkpoint: dde8828 [PHASE-4] Safety checks implementation
+Last checkpoint: (pending commit) [PHASE-3.6] ACE-Step 1.5 integration
 
 ### Completed This Session
-**Phase 3.1:**
-- Project scaffold (Cargo.toml, lib.rs, module structure)
-- Error types with recovery suggestions (error.rs)
-- Neural model trait and types (neural/model.rs)
-- Mock AI models: style-transfer, denoise, restore, enhance, ace-step (neural/mock.rs)
-- Neural model registry (neural/registry.rs)
-- Neural context tracker for intentional artifacts (neural/context.rs)
-- Agent decision logic with confidence scoring (agent/decision.rs)
-- Intent analyzer with parameter extraction (agent/intent.rs)
+**ACE-Step 1.5 Integration:**
+- GPU detection module (neural/gpu.rs): NVIDIA detection, VRAM checks, quantization recommendations
+- ACE-Step Rust client (neural/acestep.rs): NeuralModel trait impl, HTTP bridge communication
+- Python AI Bridge package (python/nueva_ai_bridge/): FastAPI server, protocol translation, process lifecycle
+- Error handling extensions: AceStepUnavailable, AceStepTimeout, InsufficientVram, BridgeConnectionError
+- Context tracker extensions: CoverTimbre, GenreTransformation, TempoChange, KeyChange, etc.
+- Registry integration with feature flags: `acestep` for real model, `acestep-mock` for testing
+- Integration tests (tests/integration_acestep.rs): 19 tests covering full flow
+- 91 total tests passing (72 unit + 19 integration)
 
-**Phase 3.5:**
-- ConversationContext, Message, AgentAction types (agent/context.rs)
-- Reference resolution: "the EQ", "that", "it", "first/last" (agent/reference.rs)
-- EffectFocus tracking for modify vs add decisions
-- UndoManager with 50-level undo/redo stack (agent/undo.rs)
-- Explanation generation for actions and chains (agent/explain.rs)
-
-**Safety Checks:**
-- AudioAnalysis struct with full EBU R128 loudness, clipping, phase metrics
-- SafetyChecker with auto-limiter for clipping prevention
-- Phase protection warnings (correlation < 0.2)
-- Loudness sanity warnings (LUFS > -5)
-- 62 unit tests passing
+**Previous Sessions:**
+- Phase 3.1: Neural model foundation, mock models, registry
+- Phase 3.5: Conversation context, reference resolution, undo/redo
+- Phase 4: Safety checks with EBU R128 loudness metrics
 
 ### Blockers
 <!-- List any blockers here -->
@@ -251,9 +243,11 @@ None
 ### Notes
 <!-- Session-specific notes -->
 - Full spec in `NUEVA_IMPLEMENTATION (3).md` (note the space in filename)
-- **AI worktree COMPLETE**: All agent/neural foundations implemented
-- Ready to merge to main
-- Real AI model integration (PyTorch bridge) deferred to later phase
+- **ACE-Step Integration COMPLETE**: Real AI model bridge implemented
+- Python bridge at `python/nueva_ai_bridge/` - run with `python -m nueva_ai_bridge`
+- Build with `cargo build --features acestep` for real ACE-Step support
+- Build with `cargo build --features acestep-mock` for testing without GPU
+- Env vars: NUEVA_ACESTEP_API_URL, NUEVA_ACESTEP_TIMEOUT_MS, NUEVA_ACESTEP_AUTO_START
 
 ---
 

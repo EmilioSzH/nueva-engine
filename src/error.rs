@@ -65,6 +65,19 @@ pub enum NuevaError {
     // IO
     #[error("IO error: {0}")]
     Io(#[from] std::io::Error),
+
+    // ACE-Step Errors
+    #[error("ACE-Step unavailable: {reason}")]
+    AceStepUnavailable { reason: String },
+
+    #[error("ACE-Step timeout after {timeout_ms}ms")]
+    AceStepTimeout { timeout_ms: u64 },
+
+    #[error("Insufficient VRAM: {available_gb:.1}GB available, {required_gb:.1}GB required")]
+    InsufficientVram { required_gb: f32, available_gb: f32 },
+
+    #[error("Bridge connection error: {message}")]
+    BridgeConnectionError { message: String },
 }
 
 impl NuevaError {
@@ -139,6 +152,27 @@ impl NuevaError {
                 "Check file permissions",
                 "Verify disk space is available",
             ],
+            NuevaError::AceStepUnavailable { .. } => vec![
+                "Install ACE-Step: pip install ace-step",
+                "Start the bridge: python -m nueva_ai_bridge",
+                "Check if the ACE-Step API is running",
+            ],
+            NuevaError::AceStepTimeout { .. } => vec![
+                "The model may be loading - try again in a moment",
+                "Check GPU memory usage",
+                "Try a shorter audio file",
+                "Increase timeout in NUEVA_ACESTEP_TIMEOUT_MS",
+            ],
+            NuevaError::InsufficientVram { .. } => vec![
+                "Close other GPU-intensive applications",
+                "Use a smaller quantization level (INT8)",
+                "Fall back to CPU inference (slower)",
+            ],
+            NuevaError::BridgeConnectionError { .. } => vec![
+                "Start the bridge: python -m nueva_ai_bridge",
+                "Check if port 8001 is available",
+                "Verify NUEVA_ACESTEP_API_URL environment variable",
+            ],
         }
     }
 
@@ -169,6 +203,10 @@ impl NuevaError {
             NuevaError::InvalidProjectState { .. } => "INVALID_STATE",
             NuevaError::Serialization(_) => "SERIALIZATION_ERROR",
             NuevaError::Io(_) => "IO_ERROR",
+            NuevaError::AceStepUnavailable { .. } => "ACESTEP_UNAVAILABLE",
+            NuevaError::AceStepTimeout { .. } => "ACESTEP_TIMEOUT",
+            NuevaError::InsufficientVram { .. } => "INSUFFICIENT_VRAM",
+            NuevaError::BridgeConnectionError { .. } => "BRIDGE_CONNECTION_ERROR",
         }
     }
 }

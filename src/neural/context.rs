@@ -65,6 +65,20 @@ pub enum IntentionalArtifact {
     SubtleCrackle,
     /// Distortion
     Distortion,
+
+    // ACE-Step specific artifacts
+    /// Cover mode timbre change - completely new instrumental character
+    CoverTimbre,
+    /// Genre transformation - intentional genre change
+    GenreTransformation,
+    /// Tempo change from ACE-Step processing
+    TempoChange,
+    /// Key change from ACE-Step processing
+    KeyChange,
+    /// Vocal extraction artifacts
+    VocalExtractionArtifacts,
+    /// Instrument layer artifacts
+    LayerArtifacts,
 }
 
 impl IntentionalArtifact {
@@ -96,6 +110,25 @@ impl IntentionalArtifact {
                 "DO NOT use bandwidth extension - limited bandwidth is intentional"
             }
             Self::Noise => "DO NOT use noise reduction - some noise is intentional",
+            // ACE-Step specific warnings
+            Self::CoverTimbre => {
+                "DO NOT EQ to match original - cover has intentionally different character"
+            }
+            Self::GenreTransformation => {
+                "DO NOT try to restore original genre characteristics - transformation is intentional"
+            }
+            Self::TempoChange => {
+                "DO NOT time-stretch to match original tempo - tempo change is intentional"
+            }
+            Self::KeyChange => {
+                "DO NOT pitch-shift to match original key - key change is intentional"
+            }
+            Self::VocalExtractionArtifacts => {
+                "Slight artifacts in vocal extraction are expected - do not over-process"
+            }
+            Self::LayerArtifacts => {
+                "Layer blending artifacts are expected - do not try to 'clean' the mix"
+            }
         }
     }
 }
@@ -165,8 +198,18 @@ impl NeuralContextTracker {
 
         if model == "ace-step" {
             if let Some(mode) = params.get("mode").and_then(|v| v.as_str()) {
-                if mode == "cover" {
-                    artifacts.push(IntentionalArtifact::DifferentTimbre);
+                match mode {
+                    "cover" => {
+                        artifacts.push(IntentionalArtifact::DifferentTimbre);
+                        artifacts.push(IntentionalArtifact::CoverTimbre);
+                    }
+                    "extract" => {
+                        artifacts.push(IntentionalArtifact::VocalExtractionArtifacts);
+                    }
+                    "layer" => {
+                        artifacts.push(IntentionalArtifact::LayerArtifacts);
+                    }
+                    _ => {}
                 }
             }
 
@@ -176,6 +219,22 @@ impl NeuralContextTracker {
                     artifacts.push(IntentionalArtifact::IntentionalColoration);
                     artifacts.push(IntentionalArtifact::FrequencyRolloff);
                 }
+                // Detect genre transformation
+                let genre_keywords = [
+                    "jazz", "rock", "classical", "electronic", "hip hop", "metal",
+                    "country", "folk", "reggae", "blues", "pop", "r&b", "punk",
+                ];
+                if genre_keywords.iter().any(|g| prompt_lower.contains(g)) {
+                    artifacts.push(IntentionalArtifact::GenreTransformation);
+                }
+            }
+
+            // Check for explicit tempo/key changes in params
+            if params.get("tempo").is_some() || params.get("bpm").is_some() {
+                artifacts.push(IntentionalArtifact::TempoChange);
+            }
+            if params.get("key").is_some() || params.get("pitch").is_some() {
+                artifacts.push(IntentionalArtifact::KeyChange);
             }
         }
 
