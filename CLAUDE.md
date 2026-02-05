@@ -125,11 +125,11 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [ ] Basic playback/export
 
 ### Phase 2: DSP Effects Library
-- [ ] EQ (parametric, shelf, HP/LP filters)
-- [ ] Dynamics (compressor, limiter, gate)
-- [ ] Time-based (delay, reverb)
-- [ ] Utility (gain, pan, stereo tools)
-- [ ] Effect chain ordering
+- [x] EQ (parametric, shelf, HP/LP filters)
+- [x] Dynamics (compressor, limiter, gate)
+- [x] Time-based (delay, reverb)
+- [x] Utility (gain, saturation)
+- [x] Effect chain ordering
 
 ### Phase 3: AI/Neural Integration
 - [ ] Mock AI models (for pipeline testing)
@@ -198,7 +198,8 @@ nueva/
 ### Learned Rules
 <!-- Claude adds rules here after corrections -->
 
-1. **[PLACEHOLDER]** First learned rule will go here
+1. **[Rust Edition]** Cargo init may generate `edition = "2024"` which doesn't exist yet - always fix to `edition = "2021"`
+2. **[Subagent Parallelism]** Spawning 8 parallel subagents for independent effect implementations works well - each effect has no shared state
 
 ---
 
@@ -206,19 +207,20 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: Test Infrastructure Complete
-Worktree: wt-test
-Last checkpoint: Test harness built
+Phase: 2 (DSP Effects Library) - COMPLETE
+Worktree: wt-dsp
+Last checkpoint: [PHASE-2.0] DSP Effects Library complete
 
 ### Blockers
 <!-- List any blockers here -->
-None - waiting for other worktrees to implement features
+None
 
 ### Notes
 <!-- Session-specific notes -->
-- Full spec in NUEVA_IMPLEMENTATION (3).md
-- Priority: Audio Engine → Mock AI → DSP → Full integration
-- Test harness ready with 42 tests (3 ignored pending DSP implementation)
+- Full spec in `NUEVA_IMPLEMENTATION (3).md`
+- Phase 2 completed with 171 passing tests
+- Effects implemented: Gain, ParametricEQ, Compressor, Gate, Limiter, Reverb, Delay, Saturation
+- Effect chain with auto-ordering per spec §4.3
 
 ---
 

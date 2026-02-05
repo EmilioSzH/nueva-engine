@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cargo build:*)",
+      "Bash(cargo test:*)",
+      "Bash(cargo check:*)",
+      "Bash(findstr:*)",
+      "Bash(cargo clippy:*)",
+      "Bash(Select-String -Pattern \"storage\" -SimpleMatch)",
+      "Bash(cargo fmt:*)",
+      "Bash(cargo run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git fetch:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr view:*)",
+      "Bash(git rebase:*)",
+      "Bash(git merge:*)",
+      "Bash(grep:*)"
+    ]
+  }
+}
