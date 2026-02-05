@@ -6,8 +6,8 @@ use std::path::Path;
 
 use log::{info, warn};
 
+use crate::state::error::Result;
 use crate::state::{recover_from_crash, Project, UndoManager};
-use crate::Result;
 
 /// Create a new project directory.
 pub fn create_project(path: &Path, input: Option<&Path>) -> Result<()> {

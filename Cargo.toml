@@ -1,35 +1,47 @@
 [package]
-name = "nueva-state"
+name = "nueva"
 version = "0.1.0"
 edition = "2021"
-description = "State management module for Nueva audio processing system"
 authors = ["Nueva Team"]
+description = "Functional audio processing system with AI and DSP interfaces"
 license = "MIT"
+repository = "https://github.com/nueva/nueva"
 
 [lib]
-name = "nueva_state"
+name = "nueva"
 path = "src/lib.rs"
 
 [[bin]]
-name = "nueva"
+name = "nueva-cli"
 path = "src/main.rs"
 
 [dependencies]
+# Audio I/O
+hound = "3.5"                        # WAV file reading/writing
+
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-# Date/time handling
-chrono = { version = "0.4", features = ["serde"] }
-
-# Hashing for file integrity
-sha2 = "0.10"
-
 # Error handling
 thiserror = "1.0"
+anyhow = "1.0"
 
-# UUID generation for action IDs
+# Async runtime (for future AI bridge)
+tokio = { version = "1.0", features = ["full"], optional = true }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+log = "0.4"
+env_logger = "0.10"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Utilities
 uuid = { version = "1.0", features = ["v4", "serde"] }
+sha2 = "0.10"                        # SHA-256 checksums for file integrity
 
 # CLI parsing
 clap = { version = "4.0", features = ["derive"] }
@@ -37,9 +49,19 @@ clap = { version = "4.0", features = ["derive"] }
 # File system utilities
 walkdir = "2.0"
 
-# Logging
-log = "0.4"
-env_logger = "0.10"
-
 [dev-dependencies]
-tempfile = "3.0"
+approx = "0.5"                       # Float comparison for tests
+tempfile = "3.0"                     # Temporary files for tests
+pretty_assertions = "1.0"
+test-case = "3.0"
+
+[features]
+default = []
+async-bridge = ["tokio"]
+
+[profile.release]
+lto = true
+codegen-units = 1
+
+[workspace]
+members = ["."]

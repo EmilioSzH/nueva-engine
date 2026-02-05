@@ -5,7 +5,7 @@ Nueva is a functional audio processing system with two parallel interfaces:
 1. **Traditional DSP Controls**: Parameter-based effects (EQ, compression, reverb)
 2. **AI Agent Interface**: Natural language commands invoking AI audio processing
 
-Full spec: `NUEVA_IMPLEMENTATION.md`
+Full spec: `NUEVA_IMPLEMENTATION (3).md`
 
 ---
 
@@ -86,7 +86,7 @@ Main task: "Implement DSP effects library"
 
 Spawn subagents:
   - Subagent A: Implement EQ (parametric, shelf, filters)
-  - Subagent B: Implement Dynamics (compressor, gate, limiter)  
+  - Subagent B: Implement Dynamics (compressor, gate, limiter)
   - Subagent C: Implement Time-based (delay, reverb)
   - Subagent D: Write tests for all effects
 
@@ -118,11 +118,11 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 ## Implementation Phases (from spec)
 
 ### Phase 1: Audio Engine Foundation [CRITICAL]
-- [ ] Layer 0: Immutable source storage
-- [ ] Layer 1: AI state buffer
-- [ ] Layer 2: DSP chain (real-time)
-- [ ] Transport state machine
-- [ ] Basic playback/export
+- [x] Layer 0: Immutable source storage
+- [x] Layer 1: AI state buffer
+- [x] Layer 2: DSP chain (real-time)
+- [x] Transport state machine
+- [x] Basic playback/export (import/export WAV)
 
 ### Phase 2: DSP Effects Library
 - [ ] EQ (parametric, shelf, HP/LP filters)
@@ -201,9 +201,11 @@ nueva/
 ### Learned Rules
 <!-- Claude adds rules here after corrections -->
 
-1. **Use `Self::` for associated functions** - When calling static methods like `project_file_path()` from an instance method, use `Self::method()` not `self.method()`
-2. **Run cargo fmt before committing** - Subagents may produce code with different formatting; always run `cargo fmt` to normalize
-3. **Spawn subagents for parallel file creation** - When implementing multiple independent modules, spawn separate subagents for each file to maximize parallelism
+1. **[SPEC FILE]** The spec file is `NUEVA_IMPLEMENTATION (3).md` (not without the number)
+2. **[SUBAGENTS]** Spawn 4+ parallel subagents for independent module implementations - significant speedup
+3. **[VALIDATION]** Audio validation (§3.6) catches edge cases - always validate imported audio
+4. **[Self::]** Use `Self::` for associated functions - When calling static methods from an instance method
+5. **[FORMAT]** Run cargo fmt before committing - Subagents may produce code with different formatting
 
 ---
 
@@ -211,19 +213,19 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 5 - State & CLI (COMPLETE)
-Worktree: wt-state
-Last checkpoint: 2024-02-04 - All state management implemented
+Phase: 1+5 Complete (Engine + State)
+Worktrees: wt-engine, wt-state
+Last checkpoint: Merge of Phase 1 and Phase 5
 
-### Completed This Session
-- Project serialization with full schema from §8.2
-- Undo/redo stack with action tracking and trim history
-- Autosave manager (60s interval, 10 max, rotation)
-- Crash recovery (lock file detection, autosave recovery)
-- Schema versioning and migration system
-- Layer 1 storage management with pruning
-- CLI commands (create-project, undo, redo, history, bake, print-state)
-- 47 passing tests
+### Completed
+**Phase 1 (wt-engine):**
+- Audio engine, transport, layers
+- 113 unit tests + 9 doc-tests
+
+**Phase 5 (wt-state):**
+- Project serialization, undo/redo, autosave
+- CLI commands, crash recovery, migrations
+- 47 tests
 
 ### Blockers
 <!-- List any blockers here -->
@@ -232,8 +234,8 @@ None
 ### Notes
 <!-- Session-specific notes -->
 - Full spec in `NUEVA_IMPLEMENTATION (3).md`
+- Priority: DSP Effects → AI/Neural → Agent Logic
 - Daemon mode deferred (optional per spec)
-- Audio processing stubs in place (needs wt-engine integration)
 
 ---
 

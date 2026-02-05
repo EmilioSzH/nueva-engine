@@ -96,7 +96,7 @@ struct LockFileContent {
 ///
 /// ```no_run
 /// use std::path::Path;
-/// use nueva_state::state::crash_recovery::recover_from_crash;
+/// use nueva::state::crash_recovery::recover_from_crash;
 ///
 /// let result = recover_from_crash(Path::new("/path/to/project")).unwrap();
 /// if result.needed && result.success {
@@ -195,7 +195,7 @@ fn find_autosave_files(backups_dir: &Path) -> Result<Vec<PathBuf>> {
 ///
 /// ```
 /// use std::path::Path;
-/// use nueva_state::state::crash_recovery::parse_timestamp_from_filename;
+/// use nueva::state::crash_recovery::parse_timestamp_from_filename;
 ///
 /// let path = Path::new("autosave_20240115_143022.json");
 /// let timestamp = parse_timestamp_from_filename(path);
@@ -238,7 +238,7 @@ pub fn parse_timestamp_from_filename(path: &Path) -> Option<DateTime<Utc>> {
 ///
 /// ```no_run
 /// use std::path::Path;
-/// use nueva_state::state::crash_recovery::{recover_from_crash, apply_recovery};
+/// use nueva::state::crash_recovery::{recover_from_crash, apply_recovery};
 ///
 /// let project_path = Path::new("/path/to/project");
 /// let result = recover_from_crash(project_path).unwrap();
