@@ -44,5 +44,18 @@ fn handle_command(cmd: Commands) -> Result<()> {
         Commands::History { path } => nueva::cli::commands::show_history(&path),
         Commands::Bake { path } => nueva::cli::commands::bake(&path),
         Commands::PrintState { path } => nueva::cli::commands::print_state(&path),
+        Commands::Agent {
+            path,
+            prompt,
+            tool,
+            dry_run,
+        } => nueva::cli::commands::agent_process(&path, &prompt, &tool, dry_run),
+        Commands::Process {
+            input,
+            output,
+            prompt,
+            mode,
+            intensity,
+        } => nueva::cli::commands::process_audio(&input, output.as_deref(), &prompt, &mode, intensity),
     }
 }
