@@ -81,7 +81,7 @@ impl NeuralModelRegistry {
         self.models
             .get(id)
             .cloned()
-            .ok_or_else(|| NuevaError::UnknownModel {
+            .ok_or_else(|| NuevaError::ModelNotFound {
                 model: id.to_string(),
             })
     }

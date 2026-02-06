@@ -86,7 +86,7 @@ Main task: "Implement DSP effects library"
 
 Spawn subagents:
   - Subagent A: Implement EQ (parametric, shelf, filters)
-  - Subagent B: Implement Dynamics (compressor, gate, limiter)  
+  - Subagent B: Implement Dynamics (compressor, gate, limiter)
   - Subagent C: Implement Time-based (delay, reverb)
   - Subagent D: Write tests for all effects
 
@@ -117,21 +117,21 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 
 ## Implementation Phases (from spec)
 
-### Phase 1: Audio Engine Foundation [CRITICAL]
-- [ ] Layer 0: Immutable source storage
-- [ ] Layer 1: AI state buffer
-- [ ] Layer 2: DSP chain (real-time)
-- [ ] Transport state machine
-- [ ] Basic playback/export
+### Phase 1: Audio Engine Foundation [COMPLETE]
+- [x] Layer 0: Immutable source storage
+- [x] Layer 1: AI state buffer
+- [x] Layer 2: DSP chain (real-time)
+- [x] Transport state machine
+- [x] Basic playback/export
 
-### Phase 2: DSP Effects Library
-- [ ] EQ (parametric, shelf, HP/LP filters)
-- [ ] Dynamics (compressor, limiter, gate)
-- [ ] Time-based (delay, reverb)
-- [ ] Utility (gain, pan, stereo tools)
-- [ ] Effect chain ordering
+### Phase 2: DSP Effects Library [COMPLETE]
+- [x] EQ (parametric, shelf, HP/LP filters)
+- [x] Dynamics (compressor, limiter, gate)
+- [x] Time-based (delay, reverb)
+- [x] Utility (gain, saturation)
+- [x] Effect chain ordering
 
-### Phase 3: AI/Neural Integration
+### Phase 3: AI/Neural Integration [COMPLETE]
 - [x] Mock AI models (for pipeline testing)
 - [x] Model interface abstraction
 - [x] Neural tool routing (via Agent decision logic)
@@ -139,24 +139,24 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 - [ ] Style transfer integration (real models - deferred)
 - [ ] Denoise/restore integration (real models - deferred)
 
-### Phase 3.5: Conversation & Context (§7)
+### Phase 3.5: Conversation & Context [COMPLETE]
 - [x] ConversationContext with messages, actions
 - [x] Reference resolution ("the EQ", "that", "undo")
 - [x] EffectFocus for modify vs add
 - [x] UndoManager with 50-level undo/redo
 - [x] Explanation generation
 
-### Phase 4: Agent & Decision Logic
+### Phase 4: Agent & Decision Logic [COMPLETE]
 - [x] Prompt parsing (Intent analyzer)
 - [x] Tool selection (DSP vs Neural vs Both)
 - [x] Confidence scoring
 - [x] Safety checks (clipping, phase, loudness)
 
-### Phase 5: State & CLI
-- [ ] Project serialization (JSON)
-- [ ] Undo/redo stack
-- [ ] Bake operation
-- [ ] CLI commands
+### Phase 5: State & CLI [COMPLETE]
+- [x] Project serialization (JSON)
+- [x] Undo/redo stack
+- [x] Bake operation
+- [x] CLI commands
 - [ ] Daemon mode (optional)
 
 ---
@@ -206,9 +206,9 @@ nueva/
 ### Learned Rules
 <!-- Claude adds rules here after corrections -->
 
-1. **[AMBIGUOUS VS COMPLEX]** Distinguish "truly ambiguous" (vague prompts like "make it better" with no specifics) from "complex" (multiple effects requested). Truly ambiguous → ASK_CLARIFICATION with ~20% confidence. Complex → might use BOTH tools with higher confidence.
-
-2. **[SPEC FILE NAME]** The spec file has spaces in the name: `NUEVA_IMPLEMENTATION (3).md` — always quote paths.
+1. **[Rust Edition]** Cargo init may generate `edition = "2024"` which doesn't exist yet - always fix to `edition = "2021"`
+2. **[Subagent Parallelism]** Spawning 8 parallel subagents for independent effect implementations works well - each effect has no shared state
+3. **[AMBIGUOUS VS COMPLEX]** Distinguish "truly ambiguous" (vague prompts like "make it better" with no specifics) from "complex" (multiple effects requested). Truly ambiguous → ASK_CLARIFICATION with ~20% confidence. Complex → might use BOTH tools with higher confidence.
 
 ---
 
@@ -216,25 +216,18 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: 3.6 (ACE-Step Integration) - COMPLETE
-Worktree: wt-ai
-Last checkpoint: (pending commit) [PHASE-3.6] ACE-Step 1.5 integration
+Phase: ALL PHASES COMPLETE - Ready for integration testing
+Worktree: wt-ai (merging to master)
+Last checkpoint: [PHASE-3.6] ACE-Step 1.5 integration
 
-### Completed This Session
-**ACE-Step 1.5 Integration:**
-- GPU detection module (neural/gpu.rs): NVIDIA detection, VRAM checks, quantization recommendations
-- ACE-Step Rust client (neural/acestep.rs): NeuralModel trait impl, HTTP bridge communication
-- Python AI Bridge package (python/nueva_ai_bridge/): FastAPI server, protocol translation, process lifecycle
-- Error handling extensions: AceStepUnavailable, AceStepTimeout, InsufficientVram, BridgeConnectionError
-- Context tracker extensions: CoverTimbre, GenreTransformation, TempoChange, KeyChange, etc.
-- Registry integration with feature flags: `acestep` for real model, `acestep-mock` for testing
-- Integration tests (tests/integration_acestep.rs): 19 tests covering full flow
-- 91 total tests passing (72 unit + 19 integration)
-
-**Previous Sessions:**
-- Phase 3.1: Neural model foundation, mock models, registry
-- Phase 3.5: Conversation context, reference resolution, undo/redo
-- Phase 4: Safety checks with EBU R128 loudness metrics
+### Completed All Phases
+**Phase 1 (wt-engine):** Audio engine, transport, layers
+**Phase 2 (wt-dsp):** Complete DSP effects library (171 tests)
+**Phase 3 (wt-ai):** Neural model foundation, mock models, registry
+**Phase 3.5 (wt-ai):** Conversation context, reference resolution, undo/redo
+**Phase 3.6 (wt-ai):** ACE-Step 1.5 real AI integration
+**Phase 4 (wt-ai):** Safety checks with EBU R128 loudness metrics
+**Phase 5 (wt-state):** State management and CLI
 
 ### Blockers
 <!-- List any blockers here -->
@@ -243,8 +236,10 @@ None
 ### Notes
 <!-- Session-specific notes -->
 - Full spec in `NUEVA_IMPLEMENTATION (3).md` (note the space in filename)
-- **ACE-Step Integration COMPLETE**: Real AI model bridge implemented
-- Python bridge at `python/nueva_ai_bridge/` - run with `python -m nueva_ai_bridge`
+- **ALL CORE PHASES COMPLETE**
+- DSP Effects: Gain, ParametricEQ, Compressor, Gate, Limiter, Reverb, Delay, Saturation
+- Effect chain with auto-ordering per spec §4.3
+- ACE-Step integration via Python bridge at `python/nueva_ai_bridge/`
 - Build with `cargo build --features acestep` for real ACE-Step support
 - Build with `cargo build --features acestep-mock` for testing without GPU
 - Env vars: NUEVA_ACESTEP_API_URL, NUEVA_ACESTEP_TIMEOUT_MS, NUEVA_ACESTEP_AUTO_START

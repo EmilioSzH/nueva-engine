@@ -373,21 +373,20 @@ impl NeuralModel for AceStepModel {
     fn validate_params(&self, params: &NeuralModelParams) -> Result<()> {
         // Check that prompt is provided
         if params.get_string("prompt").is_none() {
-            return Err(NuevaError::NeuralModelError {
-                model: "ace-step".to_string(),
-                message: "prompt parameter is required".to_string(),
+            return Err(NuevaError::InvalidParameter {
+                param: "prompt".to_string(),
+                value: "<missing>".to_string(),
+                expected: "text description of desired output".to_string(),
             });
         }
 
         // Validate mode if provided
         if let Some(mode) = params.get_string("mode") {
             if AceStepMode::from_str(&mode).is_none() {
-                return Err(NuevaError::NeuralModelError {
-                    model: "ace-step".to_string(),
-                    message: format!(
-                        "Invalid mode '{}'. Valid modes: transform, cover, repaint, extract, layer, complete",
-                        mode
-                    ),
+                return Err(NuevaError::InvalidParameter {
+                    param: "mode".to_string(),
+                    value: mode,
+                    expected: "transform, cover, repaint, extract, layer, or complete".to_string(),
                 });
             }
         }
@@ -395,9 +394,10 @@ impl NeuralModel for AceStepModel {
         // Validate intensity range
         if let Some(intensity) = params.get_f32("intensity") {
             if !(0.0..=1.0).contains(&intensity) {
-                return Err(NuevaError::NeuralModelError {
-                    model: "ace-step".to_string(),
-                    message: format!("intensity must be between 0.0 and 1.0, got {}", intensity),
+                return Err(NuevaError::InvalidParameter {
+                    param: "intensity".to_string(),
+                    value: intensity.to_string(),
+                    expected: "value between 0.0 and 1.0".to_string(),
                 });
             }
         }
@@ -478,11 +478,10 @@ impl NeuralModel for AceStepModel {
                 metadata: response.metadata,
             })
         } else {
-            Err(NuevaError::NeuralModelError {
-                model: "ace-step".to_string(),
-                message: response
+            Err(NuevaError::AiProcessingError {
+                reason: response
                     .error_message
-                    .unwrap_or_else(|| "Unknown error".to_string()),
+                    .unwrap_or_else(|| "Unknown ACE-Step error".to_string()),
             })
         }
     }
