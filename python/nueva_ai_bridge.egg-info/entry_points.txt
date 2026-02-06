@@ -1,0 +1,3 @@
+[console_scripts]
+nueva-ace-step = nueva.ace_step:main
+nueva-ai-bridge = nueva.bridge:main

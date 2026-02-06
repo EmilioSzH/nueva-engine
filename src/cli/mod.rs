@@ -85,4 +85,47 @@ pub enum Commands {
         /// Path to the project
         path: PathBuf,
     },
+
+    /// Process audio with AI agent
+    #[command(name = "agent")]
+    Agent {
+        /// Path to the project
+        #[arg(short, long)]
+        path: PathBuf,
+
+        /// Natural language prompt describing desired transformation
+        #[arg(short = 'm', long)]
+        prompt: String,
+
+        /// Force tool type: auto, dsp, neural
+        #[arg(short, long, default_value = "auto")]
+        tool: String,
+
+        /// Dry run - show what would be done without executing
+        #[arg(long)]
+        dry_run: bool,
+    },
+
+    /// Process a standalone audio file (no project)
+    #[command(name = "process")]
+    Process {
+        /// Input audio file
+        input: PathBuf,
+
+        /// Output audio file
+        #[arg(short, long)]
+        output: Option<PathBuf>,
+
+        /// Natural language prompt
+        #[arg(short = 'm', long)]
+        prompt: String,
+
+        /// Processing mode: transform, cover, repaint, extract
+        #[arg(long, default_value = "transform")]
+        mode: String,
+
+        /// Transformation intensity (0.0 - 1.0)
+        #[arg(short, long, default_value = "0.7")]
+        intensity: f32,
+    },
 }
