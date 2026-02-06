@@ -86,7 +86,7 @@ Main task: "Implement DSP effects library"
 
 Spawn subagents:
   - Subagent A: Implement EQ (parametric, shelf, filters)
-  - Subagent B: Implement Dynamics (compressor, gate, limiter)  
+  - Subagent B: Implement Dynamics (compressor, gate, limiter)
   - Subagent C: Implement Time-based (delay, reverb)
   - Subagent D: Write tests for all effects
 
@@ -118,43 +118,45 @@ This project uses parallel git worktrees. Each worktree runs independent Claude 
 ## Implementation Phases (from spec)
 
 ### Phase 1: Audio Engine Foundation [COMPLETE]
-- [x] Layer 0: Immutable source storage (`src/layers/layer0.rs`)
-- [x] Layer 1: AI state buffer (`src/layers/layer1.rs`)
-- [x] Layer 2: DSP chain (`src/layers/layer2.rs`)
-- [x] Transport state machine (`src/engine/transport.rs`)
-- [x] Basic playback/export (`src/engine/io.rs`)
+- [x] Layer 0: Immutable source storage
+- [x] Layer 1: AI state buffer
+- [x] Layer 2: DSP chain (real-time)
+- [x] Transport state machine
+- [x] Basic playback/export
 
 ### Phase 2: DSP Effects Library [COMPLETE]
 - [x] EQ (parametric, shelf, HP/LP filters)
 - [x] Dynamics (compressor, limiter, gate)
 - [x] Time-based (delay, reverb)
 - [x] Utility (gain, saturation)
-- [x] Effect chain ordering (`src/dsp/chain.rs`)
+- [x] Effect chain ordering
 
 ### Phase 3: AI/Neural Integration [COMPLETE]
-- [x] Mock AI models (`src/neural/mock.rs`)
-- [x] Model interface abstraction (`src/neural/model.rs`)
-- [x] Neural tool routing (`src/neural/registry.rs`)
-- [x] Context tracking for artifacts (`src/neural/context.rs`)
-- [x] ACE-Step 1.5 integration (`src/neural/ace_step.rs`, `python/nueva/`)
-- [x] Python bridge for AI models (`python/nueva/bridge.py`)
+- [x] Mock AI models (for pipeline testing)
+- [x] Model interface abstraction
+- [x] Neural tool routing (via Agent decision logic)
+- [x] ACE-Step 1.5 integration (GPU detection, Rust client, Python bridge)
+- [ ] Style transfer integration (real models - deferred)
+- [ ] Denoise/restore integration (real models - deferred)
+
+### Phase 3.5: Conversation & Context [COMPLETE]
+- [x] ConversationContext with messages, actions
+- [x] Reference resolution ("the EQ", "that", "undo")
+- [x] EffectFocus for modify vs add
+- [x] UndoManager with 50-level undo/redo
+- [x] Explanation generation
 
 ### Phase 4: Agent & Decision Logic [COMPLETE]
-- [x] Prompt/intent parsing (`src/agent/intent.rs`)
-- [x] Tool selection DSP/Neural/Both (`src/agent/decision.rs`)
-- [x] Confidence scoring (`src/agent/decision.rs`)
-- [x] Safety checks (`src/agent/safety.rs`)
-- [x] Reference resolution (`src/agent/reference.rs`)
-- [x] Explanation generation (`src/agent/explain.rs`)
+- [x] Prompt parsing (Intent analyzer)
+- [x] Tool selection (DSP vs Neural vs Both)
+- [x] Confidence scoring
+- [x] Safety checks (clipping, phase, loudness)
 
 ### Phase 5: State & CLI [COMPLETE]
-- [x] Project serialization JSON (`src/state/project.rs`)
-- [x] Undo/redo stack (`src/state/undo.rs`)
-- [x] Autosave (`src/state/autosave.rs`)
-- [x] Crash recovery (`src/state/crash_recovery.rs`)
-- [x] Schema migrations (`src/state/migration.rs`)
-- [x] CLI commands (`src/cli/commands.rs`)
-- [ ] Bake operation - needs integration
+- [x] Project serialization (JSON)
+- [x] Undo/redo stack
+- [x] Bake operation
+- [x] CLI commands
 - [ ] Daemon mode (optional)
 
 ---
@@ -206,6 +208,7 @@ nueva/
 
 1. **[Rust Edition]** Cargo init may generate `edition = "2024"` which doesn't exist yet - always fix to `edition = "2021"`
 2. **[Subagent Parallelism]** Spawning 8 parallel subagents for independent effect implementations works well - each effect has no shared state
+3. **[AMBIGUOUS VS COMPLEX]** Distinguish "truly ambiguous" (vague prompts like "make it better" with no specifics) from "complex" (multiple effects requested). Truly ambiguous → ASK_CLARIFICATION with ~20% confidence. Complex → might use BOTH tools with higher confidence.
 
 ---
 
@@ -213,9 +216,18 @@ nueva/
 
 ### Active Phase
 <!-- Update this as you progress -->
-Phase: All core phases COMPLETE
-Worktree: wt-engine (synced with master)
-Last checkpoint: All worktrees merged to master
+Phase: ALL PHASES COMPLETE - Ready for integration testing
+Worktree: wt-ai (merging to master)
+Last checkpoint: [PHASE-3.6] ACE-Step 1.5 integration
+
+### Completed All Phases
+**Phase 1 (wt-engine):** Audio engine, transport, layers
+**Phase 2 (wt-dsp):** Complete DSP effects library (171 tests)
+**Phase 3 (wt-ai):** Neural model foundation, mock models, registry
+**Phase 3.5 (wt-ai):** Conversation context, reference resolution, undo/redo
+**Phase 3.6 (wt-ai):** ACE-Step 1.5 real AI integration
+**Phase 4 (wt-ai):** Safety checks with EBU R128 loudness metrics
+**Phase 5 (wt-state):** State management and CLI
 
 ### Blockers
 <!-- List any blockers here -->
@@ -223,12 +235,14 @@ None
 
 ### Notes
 <!-- Session-specific notes -->
-- Full spec in `NUEVA_IMPLEMENTATION (3).md`
-- **391 unit tests + 12 doc-tests passing**
-- All core modules implemented across worktrees (wt-engine, wt-dsp, wt-ai, wt-state)
-- ACE-Step 1.5 integrated: `src/neural/ace_step.rs` (Rust) + `python/nueva/` (Python bridge)
-- ACE-Step installed at `C:\Users\dawha\ACE-Step-1.5` with models downloaded
-- Remaining work: Bake operation, Daemon mode (optional)
+- Full spec in `NUEVA_IMPLEMENTATION (3).md` (note the space in filename)
+- **ALL CORE PHASES COMPLETE**
+- DSP Effects: Gain, ParametricEQ, Compressor, Gate, Limiter, Reverb, Delay, Saturation
+- Effect chain with auto-ordering per spec §4.3
+- ACE-Step integration via Python bridge at `python/nueva_ai_bridge/`
+- Build with `cargo build --features acestep` for real ACE-Step support
+- Build with `cargo build --features acestep-mock` for testing without GPU
+- Env vars: NUEVA_ACESTEP_API_URL, NUEVA_ACESTEP_TIMEOUT_MS, NUEVA_ACESTEP_AUTO_START
 
 ---
 

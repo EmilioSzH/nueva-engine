@@ -18,7 +18,8 @@
       "Bash(gh pr view:*)",
       "Bash(git rebase:*)",
       "Bash(git merge:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git checkout:*)"
     ]
   }
 }

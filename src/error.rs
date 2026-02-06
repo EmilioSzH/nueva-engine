@@ -99,6 +99,19 @@ pub enum NuevaError {
 
     #[error("Serialization error: {details}")]
     SerializationError { details: String },
+
+    // ACE-Step Errors
+    #[error("ACE-Step unavailable: {reason}")]
+    AceStepUnavailable { reason: String },
+
+    #[error("ACE-Step timeout after {timeout_ms}ms")]
+    AceStepTimeout { timeout_ms: u64 },
+
+    #[error("Insufficient VRAM: {available_gb:.1}GB available, {required_gb:.1}GB required")]
+    InsufficientVram { required_gb: f32, available_gb: f32 },
+
+    #[error("Bridge connection error: {message}")]
+    BridgeConnectionError { message: String },
 }
 
 impl NuevaError {
@@ -128,6 +141,10 @@ impl NuevaError {
             NuevaError::Io(_) => "IO_ERROR",
             NuevaError::Serialization(_) => "SERIALIZATION_ERROR",
             NuevaError::SerializationError { .. } => "SERIALIZATION_ERROR",
+            NuevaError::AceStepUnavailable { .. } => "ACESTEP_UNAVAILABLE",
+            NuevaError::AceStepTimeout { .. } => "ACESTEP_TIMEOUT",
+            NuevaError::InsufficientVram { .. } => "INSUFFICIENT_VRAM",
+            NuevaError::BridgeConnectionError { .. } => "BRIDGE_CONNECTION_ERROR",
         }
     }
 
@@ -145,6 +162,9 @@ impl NuevaError {
             NuevaError::UnsupportedFormat { .. } => true,
             NuevaError::InvalidParameter { .. } => true,
             NuevaError::EffectNotFound { .. } => true,
+            NuevaError::AceStepUnavailable { .. } => true,
+            NuevaError::AceStepTimeout { .. } => true,
+            NuevaError::BridgeConnectionError { .. } => true,
             _ => false,
         }
     }
@@ -212,6 +232,27 @@ impl NuevaError {
                 "Check the JSON format is valid",
                 "Ensure all required fields are present",
             ],
+            NuevaError::AceStepUnavailable { .. } => vec![
+                "Install ACE-Step: pip install ace-step",
+                "Start the bridge: python -m nueva_ai_bridge",
+                "Check if the ACE-Step API is running",
+            ],
+            NuevaError::AceStepTimeout { .. } => vec![
+                "The model may be loading - try again in a moment",
+                "Check GPU memory usage",
+                "Try a shorter audio file",
+                "Increase timeout in NUEVA_ACESTEP_TIMEOUT_MS",
+            ],
+            NuevaError::InsufficientVram { .. } => vec![
+                "Close other GPU-intensive applications",
+                "Use a smaller quantization level (INT8)",
+                "Fall back to CPU inference (slower)",
+            ],
+            NuevaError::BridgeConnectionError { .. } => vec![
+                "Start the bridge: python -m nueva_ai_bridge",
+                "Check if port 8001 is available",
+                "Verify NUEVA_ACESTEP_API_URL environment variable",
+            ],
             _ => vec![],
         }
     }
@@ -238,6 +279,15 @@ impl NuevaError {
                  3. Use lighter processing"
                     .to_string()
             }
+            NuevaError::AceStepUnavailable { reason } => {
+                format!("ACE-Step isn't available right now: {}. Need help setting it up?", reason)
+            }
+            NuevaError::AceStepTimeout { timeout_ms } => {
+                format!("ACE-Step took too long ({}s). The model might still be loading - want to try again?", timeout_ms / 1000)
+            }
+            NuevaError::InsufficientVram { required_gb, available_gb } => {
+                format!("Need {:.1}GB VRAM but only {:.1}GB available. I can use CPU mode instead (slower but works).", required_gb, available_gb)
+            }
             _ => self.to_string(),
         }
     }
@@ -263,5 +313,15 @@ mod tests {
         };
         assert!(!err.recovery_suggestions().is_empty());
         assert!(err.is_recoverable());
+    }
+
+    #[test]
+    fn test_acestep_errors() {
+        let err = NuevaError::AceStepUnavailable {
+            reason: "Bridge not running".to_string(),
+        };
+        assert_eq!(err.error_code(), "ACESTEP_UNAVAILABLE");
+        assert!(err.is_recoverable());
+        assert!(!err.recovery_suggestions().is_empty());
     }
 }

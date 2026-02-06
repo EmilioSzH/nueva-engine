@@ -27,7 +27,38 @@ impl NeuralModelRegistry {
     pub fn with_defaults() -> Self {
         let mut registry = Self::new();
 
-        // Register mock models
+        // Register mock models for non-ACE-Step neural processors
+        registry.register(Arc::new(super::mock::MockStyleTransfer::new()));
+        registry.register(Arc::new(super::mock::MockDenoise::new()));
+        registry.register(Arc::new(super::mock::MockRestore::new()));
+        registry.register(Arc::new(super::mock::MockEnhance::new()));
+
+        // Register ACE-Step model based on feature flags
+        #[cfg(feature = "acestep")]
+        {
+            // Real ACE-Step model when acestep feature is enabled
+            registry.register(Arc::new(super::acestep::AceStepModel::new()));
+        }
+
+        #[cfg(all(not(feature = "acestep"), feature = "acestep-mock"))]
+        {
+            // Mock ACE-Step for testing without real ACE-Step
+            registry.register(Arc::new(super::mock::MockAceStep::new()));
+        }
+
+        #[cfg(not(any(feature = "acestep", feature = "acestep-mock")))]
+        {
+            // Default: use mock for development
+            registry.register(Arc::new(super::mock::MockAceStep::new()));
+        }
+
+        registry
+    }
+
+    /// Create registry with mock models only (for testing)
+    pub fn with_mocks() -> Self {
+        let mut registry = Self::new();
+
         registry.register(Arc::new(super::mock::MockStyleTransfer::new()));
         registry.register(Arc::new(super::mock::MockDenoise::new()));
         registry.register(Arc::new(super::mock::MockRestore::new()));
